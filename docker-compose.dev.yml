@@ -1,0 +1,67 @@
+version: '3'
+
+
+services:
+  appplication:
+    build:
+      context: ./
+    ports:
+      - "3000:3000"
+    volumes:
+       - ./:/home/node/app_1
+    links:
+      - mongo
+      - postgres
+    
+    stdin_open: true
+    tty: true
+    container_name: "${CRUD_SERVICE_CONTAINER_NAME}"
+    #network_mode: bridge
+    networks:
+      - gateway
+    
+
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    
+    stdin_open: true
+    tty: true
+    container_name: "${MONGO_CONTAINER_NAME}"
+    #network_mode: bridge
+    networks:
+      - gateway
+    volumes:
+      - myapp:/home/node/app_1
+
+
+  postgres:
+    image: postgres
+    container_name: "${POSTGRES_CONTAINER_NAME}"
+    restart: always
+    ports:
+      - "5430:5432"
+    environment:
+      POSTGRES_PASSWORD: password1
+      POSTGRES_USER : postgres
+    networks:
+      - gateway
+    volumes:
+      - myapp:/home/node/app_1
+
+
+networks:
+  gateway:
+    external: true
+
+volumes:
+  myapp:
+    external: true
+#docker run --name demo -e POSTGRES_PASSWORD=password1 -d postgres
+      
+
+    
+
+    
